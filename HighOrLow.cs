@@ -4,7 +4,7 @@ namespace HigherOrLower
     internal class Program
     {
         //File Path for Score
-        const string filePath = @"C:\\Users\\1211d\\Desktop\\Computer Science\\Personal Projects\\Higher - Lower\\score.txt";
+        const string filePath = @"C:\\Users\\user\\Desktop\\Computer Science\\Personal Projects\\Higher - Lower\\score.txt";
 
         //MAIN
         static void Main(string[] args)
