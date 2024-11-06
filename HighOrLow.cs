@@ -1,109 +1,102 @@
-﻿//The purpose of this program is the simple higher or lower game
-namespace HigherOrLower
+﻿//Purpose of program is to convert Farenheit to Celcius and vice versa.
+namespace TempConverter
 {
     internal class Program
     {
-        //File Path for Score
-        const string filePath = @"C:\\Users\\1211d\\Desktop\\Computer Science\\Personal Projects\\Higher - Lower\\score.txt";
-
-        //MAIN
         static void Main(string[] args)
         {
-            //Declaring the taunts
-            string[,] taunt = {
-                { "Wow thats so low", "A little too low", "Wow, so far off, LOW", "So close yet so low" }, 
-                { "A tad bit too high", "Jeez, high up in the skies huh?", "You flew high over it", "You my man, are too high for this" }
-            };
+            //Variable Declarations
+            double f; //Farenheit Var
+            double c; //Celcius Var
 
-            //Varaiable Creation
-            Random random = new Random();
-            int playerGuess;                //Variable to catch user input
-            int randomNumber;               //This will be a random number
-            int numberOfGuesses = 0;        //Catching how many loops it took to guess correctly
-            bool appIsOn = true;
+            int userChoice;     //Determines what conversion user wants
+            bool appIsOn = true;//Determines whether the app is on or off
 
-            int previousScore;              //Loads the previous score from the last game.
-
-            //Loading the previos score from the last game
-            previousScore = loadScore(filePath);
-            Console.WriteLine("Your previous score was: {0}", previousScore);
-
-            //Generating random number
-            Console.WriteLine("A random number between 1-100 has been chosen");
-            randomNumber = random.Next(1, 100);
-
-         //+++++++++++++++++++++++++++++++
-         //MAIN LOOP
+            //Intitial Loop
             while (appIsOn)
             {
-                numberOfGuesses++;
+                userChoice = getChoice();   //Gets what conversion the user would like to make
 
-                //playerGuess is controlled by a function
-                playerGuess = guessNumber();
+                if (userChoice == 0)        //User did not make a valid choice
+                {
+                    Console.WriteLine("Input Error: Try Again");
+                }
+                else if (userChoice == 1)   // F --> C
+                {
+                    Console.Write("Farenheit Temperature: ");
+                    f = double.Parse(Console.ReadLine());
 
-                //checking to see if player was correct
-                appIsOn = checkPlayerGuess(playerGuess, randomNumber, taunt);
+                    c = convertToCelcius(f);
+                    Console.WriteLine("{0} Degrees Celcius", c);
+                }
+                else if (userChoice == 2)   // C --> F
+                {
+                    Console.Write("Celsius Temperature: ");
+                    c = double.Parse(Console.ReadLine());
+
+                    f = convertToFarenheit(c);
+                    Console.WriteLine("{0} Degrees Farenheit", f);
+                }
+                appIsOn = endApp();
             }
-            Console.WriteLine("It took you {0} guesses to get it correct.", numberOfGuesses);
-            saveScore(numberOfGuesses);
+
+            
         }
-        //--------------------------------
 
         //FUNCTION CREATION
-        static int guessNumber()
+        static double convertToCelcius(double f) // F --> C
         {
-            //Variable creation and declaration
-            int guess = 0;
-            Console.Write("Pick a number: ");
+            double c;
+            c = (f - 32) * 5/9;
+            c = Math.Round(c, 2);
+            return c;
+        }
 
-            //Catching exceptions and giving a default value
+        static double convertToFarenheit(double c) // C --> F
+        {
+            double f;
+            f = (c * 9/5) + 32;
+            f = Math.Round(f, 2);
+
+            return f;
+        }
+
+        static int getChoice() //Returns user's choice 
+        {
+            int choice = 0;
+            Console.Write("Would you like to convert Farenheit to Celcius (1) | or | convert Celcius to Farenheit (2): ");
             try
             {
-                guess = int.Parse(Console.ReadLine());
+                choice = int.Parse(Console.ReadLine());
             }
-            catch (Exception FormatException)
+            catch (Exception e)
             {
-                Console.WriteLine("You did not input a number!\n" +
-                    "A default value of 0 was given");
+                Console.WriteLine("You did not input a number");
             }
-            return guess;
+            return choice;
         }
 
-        static bool checkPlayerGuess(int playerGuess, int randomNumber, string[,] taunt)
+        static bool endApp() //Determines whether or not the User wants to end the program.
         {
-            //declaring local variables
+            //Var Declarations
             bool appIsOn = true;
-            Random random = new Random();
+            string choice;
 
-            if (playerGuess < randomNumber)
+            //Making Decision
+            Console.Write("Would you like to keep converting? Yes or No: ");
+            choice = Console.ReadLine().ToLower();
+            if (choice == "yes" || choice == "ye" || choice == "y")
             {
-                Console.WriteLine(taunt[0, random.Next(0, 4)]);
+                Console.WriteLine("Enjoy Converting!\n");
             }
-            else if (playerGuess > randomNumber)
+            else if (choice == "no" || choice == "n")
             {
-                Console.WriteLine(taunt[1, random.Next(0, 4)]);
-            }
-            else if (playerGuess == randomNumber)
-            {
-                Console.WriteLine("You guessed correctly: {0}", randomNumber);
+                Console.WriteLine("Thank you for using my app!");
                 appIsOn = false;
             }
+
+            //Returning Decision
             return appIsOn;
-        }
-
-        static void saveScore(int score)
-        {
-            string scoreString = score.ToString(); //Converts the int to a string
-            File.WriteAllText(filePath, scoreString);
-        }
-
-        static int loadScore(string filePath)
-        {
-            int previousScore = 0;                          //catches the int version of score
-            string contents = File.ReadAllText(filePath);   //Reads content from the file
-            
-            previousScore = int.Parse(contents);
-            return previousScore;
         }
     }
 }
